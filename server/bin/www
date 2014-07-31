@@ -7,3 +7,14 @@ app.set('port', process.env.PORT || 3000);
 var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
+
+var io = require('socket.io')(server);
+var fs = require('fs');
+
+// Load socket.io modules
+fs.readdirSync(__dirname + '/../sockets').forEach(function(file) {
+	if (file === "index.js" || file.substr(file.lastIndexOf('.') + 1) !== 'js')
+		return;
+	var name = file.substr(0, file.indexOf('.'));
+	require('../sockets/' + name)(io);
+});
